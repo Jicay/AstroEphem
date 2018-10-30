@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from astroephem.services.ephemeride import *
 
 
 class Planet(Resource):
@@ -6,5 +7,5 @@ class Planet(Resource):
         if name is None:
             return 'All planets'
         else:
-            return name
+            return compute_planet(name)
         pass
