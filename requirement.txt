@@ -1,9 +1,17 @@
-# This requirements file lists all third-party dependencies for this project.
-#
-# Run 'pip install -r requirements.txt -t lib/' to install these dependencies
-# in `lib/` subdirectory.
-#
-# Note: The `lib` directory is added to `sys.path` by `appengine_config.py`.
-Flask
-flask-restful
-ephem
+aniso8601==4.0.1
+Click==7.0
+Django==1.11.4
+djangorestframework==3.6.3
+ephem==3.7.6.0
+Flask==1.0.2
+Flask-Injector==0.10.1
+Flask-RESTful==0.3.6
+gunicorn==19.9.0
+injector==0.14.1
+ItsDangerous==1.0.0
+Jinja2==2.10
+MarkupSafe==1.0
+pytz==2017.2
+six==1.11.0
+typing==3.6.6
+Werkzeug==0.14.1

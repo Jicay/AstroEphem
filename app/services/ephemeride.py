@@ -1,7 +1,7 @@
 from datetime import *
 
 import ephem
-import astroephem.model.day as day
+import app.model.day as day
 
 
 def compute_planet(planet):

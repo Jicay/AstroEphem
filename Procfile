@@ -1,1 +1,1 @@
-web: python astroepehm/app.py
+web: gunicorn app:app
