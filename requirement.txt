@@ -1,6 +1,6 @@
 aniso8601==4.0.1
 Click==7.0
-Django==1.11.4
+Django==1.11.15
 djangorestframework==3.6.3
 ephem==3.7.6.0
 Flask==1.0.2
