@@ -32,112 +32,60 @@ def get_current_days():
         days.append(d)
 
     return days
-    pass
 
 
-def get_day_info(body, today):
-    info = {'name': body.name}
-
-    observer = ephem.Observer()
-    observer.lat = '44:50:16.04'
-    observer.lon = '-0:34:45.048'
-    observer.date = today
-
-    body.compute(observer)
-
+def get_times_by_observer(observer, date, body):
     previous_rising_date = observer.previous_rising(body)
     next_rising_date = observer.next_rising(body)
     previous_setting_date = observer.previous_setting(body)
     next_setting_date = observer.next_setting(body)
 
-    if ephem.localtime(previous_rising_date).date() == today:
-        info['rising'] = ephem.localtime(previous_rising_date).isoformat()
-    elif ephem.localtime(next_rising_date).date() == today:
-        info['rising'] = ephem.localtime(next_rising_date).isoformat()
-    else:
-        info['rising'] = None
+    rising_time = None
+    setting_time = None
 
-    if ephem.localtime(previous_setting_date).date() == today:
-        info['setting'] = ephem.localtime(previous_setting_date).isoformat()
-    elif ephem.localtime(next_setting_date).date() == today:
-        info['setting'] = ephem.localtime(next_setting_date).isoformat()
-    else:
-        info['setting'] = None
+    if ephem.localtime(previous_rising_date).date() == date:
+        rising_time = ephem.localtime(previous_rising_date).isoformat()
+    elif ephem.localtime(next_rising_date).date() == date:
+        rising_time = ephem.localtime(next_rising_date).isoformat()
+
+    if ephem.localtime(previous_setting_date).date() == date:
+        setting_time = ephem.localtime(previous_setting_date).isoformat()
+    elif ephem.localtime(next_setting_date).date() == date:
+        setting_time = ephem.localtime(next_setting_date).isoformat()
+
+    return rising_time, setting_time
+
+
+def create_observer(lon, lat, horizon, date):
+    observer = ephem.Observer()
+    observer.lat = lon
+    observer.lon = lat
+    observer.horizon = horizon
+    observer.pressure = 0
+    observer.date = date
+
+    return observer
+
+
+def get_day_info(body, today):
+    info = {'name': body.name}
+
+    lon = '-0:34:48'
+    lat = '44:50:24'
+
+    observer = create_observer(lon, lat, '-0:34', today)
+
+    body.compute(observer)
+
+    info['rising'], info['setting'] = get_times_by_observer(observer, today, body)
 
     if body.name == 'Sun':
-        civil_observer = ephem.Observer()
-        civil_observer.lat = '44:50:16.04'
-        civil_observer.lon = '-0:34:45.048'
-        civil_observer.horizon = str(ephem.degrees(ephem.degrees("-6") + ephem.degrees(body.radius) / 2))
-        civil_observer.date = today
+        civil_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-6") + body.radius / 2)), today)
+        nautical_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-12") + body.radius / 2)), today)
+        astronomical_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-18") + body.radius / 2)), today)
 
-        nautical_observer = ephem.Observer()
-        nautical_observer.lat = '44:50:16.04'
-        nautical_observer.lon = '-0:34:45.048'
-        nautical_observer.horizon = str(ephem.degrees(ephem.degrees("-12") + ephem.degrees(body.radius) / 2))
-        nautical_observer.date = today
-
-        astronomical_observer = ephem.Observer()
-        astronomical_observer.lat = '44:50:16.04'
-        astronomical_observer.lon = '-0:34:45.048'
-        astronomical_observer.horizon = str(ephem.degrees(ephem.degrees("-18") + ephem.degrees(body.radius) / 2))
-        astronomical_observer.date = today
-
-        previous_rising_civil_date = civil_observer.previous_rising(body)
-        next_rising_civil_date = civil_observer.next_rising(body)
-        previous_setting_civil_date = civil_observer.previous_setting(body)
-        next_setting_civil_date = civil_observer.next_setting(body)
-
-        previous_rising_naval_date = nautical_observer.previous_rising(body)
-        next_rising_naval_date = nautical_observer.next_rising(body)
-        previous_setting_naval_date = nautical_observer.previous_setting(body)
-        next_setting_naval_date = nautical_observer.next_setting(body)
-
-        previous_rising_astronomical_date = astronomical_observer.previous_rising(body)
-        next_rising_astronomical_date = astronomical_observer.next_rising(body)
-        previous_setting_astronomical_date = astronomical_observer.previous_setting(body)
-        next_setting_astronomical_date = astronomical_observer.next_setting(body)
-
-        if ephem.localtime(previous_rising_civil_date).date() == today:
-            info['rising_civil'] = ephem.localtime(previous_rising_civil_date).isoformat()
-        elif ephem.localtime(next_rising_civil_date).date() == today:
-            info['rising_civil'] = ephem.localtime(next_rising_civil_date).isoformat()
-        else:
-            info['rising_civil'] = None
-
-        if ephem.localtime(previous_setting_civil_date).date() == today:
-            info['setting_civil'] = ephem.localtime(previous_setting_civil_date).isoformat()
-        elif ephem.localtime(next_setting_civil_date).date() == today:
-            info['setting_civil'] = ephem.localtime(next_setting_civil_date).isoformat()
-        else:
-            info['setting_civil'] = None
-
-        if ephem.localtime(previous_rising_naval_date).date() == today:
-            info['rising_naval'] = ephem.localtime(previous_rising_naval_date).isoformat()
-        elif ephem.localtime(next_rising_naval_date).date() == today:
-            info['rising_naval'] = ephem.localtime(next_rising_naval_date).isoformat()
-        else:
-            info['rising_naval'] = None
-
-        if ephem.localtime(previous_setting_naval_date).date() == today:
-            info['setting_naval'] = ephem.localtime(previous_setting_naval_date).isoformat()
-        elif ephem.localtime(next_setting_naval_date).date() == today:
-            info['setting_naval'] = ephem.localtime(next_setting_naval_date).isoformat()
-        else:
-            info['setting_naval'] = None
-
-        if ephem.localtime(previous_rising_astronomical_date).date() == today:
-            info['rising_astronomical'] = ephem.localtime(previous_rising_astronomical_date).isoformat()
-        elif ephem.localtime(next_rising_astronomical_date).date() == today:
-            info['rising_astronomical'] = ephem.localtime(next_rising_astronomical_date).isoformat()
-        else:
-            info['rising_astronomical'] = None
-
-        if ephem.localtime(previous_setting_astronomical_date).date() == today:
-            info['setting_astronomical'] = ephem.localtime(previous_setting_astronomical_date).isoformat()
-        elif ephem.localtime(next_setting_astronomical_date).date() == today:
-            info['setting_astronomical'] = ephem.localtime(next_setting_astronomical_date).isoformat()
-        else:
-            info['setting_astronomical'] = None
+        info['rising_civil'], info['setting_civil'] = get_times_by_observer(civil_observer, today, body)
+        info['rising_naval'], info['setting_naval'] = get_times_by_observer(nautical_observer, today, body)
+        info['rising_astronomical'], info['setting_astronomical'] = get_times_by_observer(astronomical_observer, today, body)
 
     return info
