@@ -58,8 +58,8 @@ def get_times_by_observer(observer, date, body):
 
 def create_observer(lon, lat, horizon, date):
     observer = ephem.Observer()
-    observer.lat = lon
-    observer.lon = lat
+    observer.lat = lat
+    observer.lon = lon
     observer.horizon = horizon
     observer.pressure = 0
     observer.date = date
