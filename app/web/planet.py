@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from astroephem.services.ephemeride import *
+from app.services.ephemeride import *
 
 
 class Planet(Resource):
