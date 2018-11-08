@@ -68,19 +68,19 @@ def get_day_info(body, today):
         civil_observer = ephem.Observer()
         civil_observer.lat = '44:50:16.04'
         civil_observer.lon = '-0:34:45.048'
-        civil_observer.horizon = str(ephem.degrees(ephem.degrees("-6") + ephem.degrees(body.radius)))
+        civil_observer.horizon = str(ephem.degrees(ephem.degrees("-6") + ephem.degrees(body.radius) / 2))
         civil_observer.date = today
 
         nautical_observer = ephem.Observer()
         nautical_observer.lat = '44:50:16.04'
         nautical_observer.lon = '-0:34:45.048'
-        nautical_observer.horizon = str(ephem.degrees(ephem.degrees("-12") + ephem.degrees(body.radius)))
+        nautical_observer.horizon = str(ephem.degrees(ephem.degrees("-12") + ephem.degrees(body.radius) / 2))
         nautical_observer.date = today
 
         astronomical_observer = ephem.Observer()
         astronomical_observer.lat = '44:50:16.04'
         astronomical_observer.lon = '-0:34:45.048'
-        astronomical_observer.horizon = str(ephem.degrees(ephem.degrees("-18") + ephem.degrees(body.radius)))
+        astronomical_observer.horizon = str(ephem.degrees(ephem.degrees("-18") + ephem.degrees(body.radius) / 2))
         astronomical_observer.date = today
 
         previous_rising_civil_date = civil_observer.previous_rising(body)
