@@ -12,7 +12,7 @@ def compute_planet(planet):
     pass
 
 
-def get_current_days():
+def get_current_days(lat, lon, zone):
 
     days = []
 
@@ -21,12 +21,12 @@ def get_current_days():
     for i in range(7):
         current_date = today + timedelta(days=i)
 
-        sun_info = get_day_info(ephem.Sun(), current_date)
-        moon_info = get_day_info(ephem.Moon(), current_date)
-        venus_info = get_day_info(ephem.Venus(), current_date)
-        mars_info = get_day_info(ephem.Mars(), current_date)
-        jupiter_info = get_day_info(ephem.Jupiter(), current_date)
-        saturn_info = get_day_info(ephem.Saturn(), current_date)
+        sun_info = get_day_info(ephem.Sun(), current_date, lat, lon, zone)
+        moon_info = get_day_info(ephem.Moon(), current_date, lat, lon, zone)
+        venus_info = get_day_info(ephem.Venus(), current_date, lat, lon, zone)
+        mars_info = get_day_info(ephem.Mars(), current_date, lat, lon, zone)
+        jupiter_info = get_day_info(ephem.Jupiter(), current_date, lat, lon, zone)
+        saturn_info = get_day_info(ephem.Saturn(), current_date, lat, lon, zone)
 
         d = day.Day(sun=sun_info, moon=moon_info, venus=venus_info, mars=mars_info, jupiter=jupiter_info, saturn=saturn_info, date=current_date.isoformat())
         days.append(d)
@@ -34,7 +34,7 @@ def get_current_days():
     return days
 
 
-def get_times_by_observer(observer, date, body):
+def get_times_by_observer(observer, date, body, zone):
     previous_rising_date = observer.previous_rising(body)
     next_rising_date = observer.next_rising(body)
     previous_setting_date = observer.previous_setting(body)
@@ -44,7 +44,7 @@ def get_times_by_observer(observer, date, body):
     setting_time = None
 
     if ephem.localtime(previous_rising_date).date() == date:
-        rising_time = ephem.localtime(previous_rising_date).isoformat()
+        rising_time = ephem.date(previous_rising_date).isoformat()
     elif ephem.localtime(next_rising_date).date() == date:
         rising_time = ephem.localtime(next_rising_date).isoformat()
 
@@ -67,25 +67,22 @@ def create_observer(lon, lat, horizon, date):
     return observer
 
 
-def get_day_info(body, today):
+def get_day_info(body, today, lat, lon, zone):
     info = {'name': body.name}
 
-    lon = '-0:34:48'
-    lat = '44:50:24'
-
-    observer = create_observer(lon, lat, '-0:34', today)
+    observer = create_observer(lon * ephem.pi / 180, lat * ephem.pi / 180, '-0:34', today)
 
     body.compute(observer)
 
-    info['rising'], info['setting'] = get_times_by_observer(observer, today, body)
+    info['rising'], info['setting'] = get_times_by_observer(observer, today, body, zone)
 
     if body.name == 'Sun':
         civil_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-6") + body.radius / 2)), today)
         nautical_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-12") + body.radius / 2)), today)
         astronomical_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-18") + body.radius / 2)), today)
 
-        info['rising_civil'], info['setting_civil'] = get_times_by_observer(civil_observer, today, body)
-        info['rising_naval'], info['setting_naval'] = get_times_by_observer(nautical_observer, today, body)
-        info['rising_astronomical'], info['setting_astronomical'] = get_times_by_observer(astronomical_observer, today, body)
+        info['rising_civil'], info['setting_civil'] = get_times_by_observer(civil_observer, today, body, zone)
+        info['rising_naval'], info['setting_naval'] = get_times_by_observer(nautical_observer, today, body, zone)
+        info['rising_astronomical'], info['setting_astronomical'] = get_times_by_observer(astronomical_observer, today, body, zone)
 
     return info
