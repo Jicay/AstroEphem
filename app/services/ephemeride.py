@@ -70,16 +70,19 @@ def create_observer(lon, lat, horizon, date):
 def get_day_info(body, today, lat, lon, zone):
     info = {'name': body.name}
 
-    observer = create_observer(lon * ephem.pi / 180, lat * ephem.pi / 180, '-0:34', today)
+    lat_degrees = lat * ephem.pi / 180
+    lon_degrees = lon * ephem.pi / 180
+
+    observer = create_observer(lon_degrees, lat_degrees, '-0:34', today)
 
     body.compute(observer)
 
     info['rising'], info['setting'] = get_times_by_observer(observer, today, body, zone)
 
     if body.name == 'Sun':
-        civil_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-6") + body.radius / 2)), today)
-        nautical_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-12") + body.radius / 2)), today)
-        astronomical_observer = create_observer(lon, lat, str(ephem.degrees(ephem.degrees("-18") + body.radius / 2)), today)
+        civil_observer = create_observer(lon_degrees, lat_degrees, str(ephem.degrees(ephem.degrees("-6") + body.radius / 2)), today)
+        nautical_observer = create_observer(lon_degrees, lat_degrees, str(ephem.degrees(ephem.degrees("-12") + body.radius / 2)), today)
+        astronomical_observer = create_observer(lon_degrees, lat_degrees, str(ephem.degrees(ephem.degrees("-18") + body.radius / 2)), today)
 
         info['rising_civil'], info['setting_civil'] = get_times_by_observer(civil_observer, today, body, zone)
         info['rising_naval'], info['setting_naval'] = get_times_by_observer(nautical_observer, today, body, zone)
