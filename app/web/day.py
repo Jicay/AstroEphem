@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.services.ephemeride import *
+from app.services.location import get_location
 
 
 class Day(Resource):
@@ -23,5 +24,7 @@ class Day(Resource):
         if zone is None:
             zone = 0
 
-        return get_current_days(lat, lon, zone)
-        pass
+        week = get_current_days(lat, lon, zone)
+        location = get_location(lat, lon)
+
+        return dict(week=week, location=location)
