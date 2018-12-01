@@ -16,10 +16,10 @@ class Day(Resource):
         zone = args['timezone']
 
         if lat is None:
-            lat = 0
+            lat = 44.84
 
         if lon is None:
-            lon = 0
+            lon = -0.58
 
         if zone is None:
             zone = 0
